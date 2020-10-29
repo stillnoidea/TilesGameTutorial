@@ -28,6 +28,8 @@ class GameActivity : FragmentActivity(), GameFinishedDialogFragment.GameFinished
     private lateinit var counterTextView: TextView
     private var filledBoxesCount = AtomicInteger()
     private var clearedBoxesCounter = AtomicInteger()
+    private lateinit var difficulty: Difficulty
+    var gameFinished = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,6 +38,7 @@ class GameActivity : FragmentActivity(), GameFinishedDialogFragment.GameFinished
         tilesGridView = binding.tilesGridView
         counterTextView = binding.pointsCounter
 
+        difficulty = intent.getSerializableExtra(MainActivity.DIFFICULTY_KEY) as Difficulty
         tilesGridView.numColumns = GRID_COLUMNS;
 
         val tilesAdapter = ArrayAdapter(this, R.layout.tile, tiles)
@@ -57,35 +60,37 @@ class GameActivity : FragmentActivity(), GameFinishedDialogFragment.GameFinished
             CoroutineScope(Main).launch {
                 startGame()
             }.invokeOnCompletion {
-                showRoundNumbersDialog()
+                showGameFinishedDialog()
             }
         }
     }
 
-
     private fun onTileClicked(position: Int) {
-        filledBoxesCount.decrementAndGet()
-        tiles[position].filled = false
-        tilesGridView.getChildAt(position).setBackgroundColor(getColor(R.color.white))
-        counterTextView.text = clearedBoxesCounter.incrementAndGet().toString()
+        if (!gameFinished) {
+            filledBoxesCount.decrementAndGet()
+            tiles[position].filled = false
+            tilesGridView.getChildAt(position).setBackgroundColor(getColor(R.color.white))
+            counterTextView.text = clearedBoxesCounter.incrementAndGet().toString()
+        }
     }
 
     private suspend fun startGame() {
-        var gameFinished = false
-        var timeToFillMs = INITIAL_TIME_TO_FILL_MS
+        var timeToFillMs = difficulty.initialTimeToFillMs
 
         resetGame()
         //TODO countdown 3 2 1
-        delay(1000)
-        Timer().schedule(timerTask { timeToFillMs -= 17 }, 7000, 4000)
+        delay(DELAY_BEFORE_FIRST_FILL_MS)
+        Timer().schedule(
+            timerTask { timeToFillMs -= difficulty.timeToFillDecreaseMs },
+            difficulty.initialTimeToFillMs,
+            difficulty.periodOfTimeToFillDecreaseMs
+        )
 
         while (!gameFinished) {
+            fillRandomTile()
             if (filledBoxesCount.get() == tiles.size) {
                 gameFinished = true
-            } else {
-                fillRandomTile()
             }
-
             delay(timeToFillMs)
         }
     }
@@ -101,12 +106,13 @@ class GameActivity : FragmentActivity(), GameFinishedDialogFragment.GameFinished
         }
     }
 
-    private fun showRoundNumbersDialog() {
+    private fun showGameFinishedDialog() {
         GameFinishedDialogFragment().apply { isCancelable = false }
             .show(supportFragmentManager, "gameFinishedDialog")
     }
 
     private fun resetGame() {
+        gameFinished = false
         tilesGridView.children.iterator()
             .forEach { tile -> tile.setBackgroundColor(getColor(R.color.white)) }
         tiles.forEach { tile -> tile.filled = false }
@@ -118,14 +124,14 @@ class GameActivity : FragmentActivity(), GameFinishedDialogFragment.GameFinished
     companion object {
         const val GRID_COLUMNS = 4
         const val GRID_ROWS = 7
-        const val INITIAL_TIME_TO_FILL_MS = 500L;
+        const val DELAY_BEFORE_FIRST_FILL_MS = 1000L;
         const val FINISHED_PLAYING_RESULT_OK = 4321
-        const val FINISHED_PLAYING_KEY = "finishedPlaying"
+        const val CLEARED_TILES_COUNT_KEY = "clearedTilesCount"
     }
 
     override fun onReturnToMainMenu(dialog: DialogFragment) {
         val intent = Intent()
-        intent.putExtra(FINISHED_PLAYING_KEY, clearedBoxesCounter)
+        intent.putExtra(CLEARED_TILES_COUNT_KEY, clearedBoxesCounter)
         setResult(FINISHED_PLAYING_RESULT_OK, intent)
         finish()
     }
@@ -134,7 +140,7 @@ class GameActivity : FragmentActivity(), GameFinishedDialogFragment.GameFinished
         CoroutineScope(Main).launch {
             startGame()
         }.invokeOnCompletion {
-            showRoundNumbersDialog()
+            showGameFinishedDialog()
         }
     }
 }

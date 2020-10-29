@@ -6,9 +6,11 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.DialogFragment
 import pl.mazurprzenioslo.tilegame.databinding.ActivityMainBinding
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(),
+    DifficultySelectionDialogFragment.DifficultySelectionDialogListener {
     private lateinit var binding: ActivityMainBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -35,7 +37,19 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun runGame(view: View) {
+        DifficultySelectionDialogFragment().show(
+            supportFragmentManager,
+            "difficultySelectionDialog"
+        )
+    }
+
+    override fun onDifficultySelected(dialog: DialogFragment, difficulty: Difficulty) {
         val intent = Intent(this, GameActivity::class.java)
+        intent.putExtra(DIFFICULTY_KEY, difficulty)
         startActivity(intent)
+    }
+
+    companion object {
+        const val DIFFICULTY_KEY = "selectedDifficulty";
     }
 }

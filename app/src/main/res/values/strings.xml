@@ -4,8 +4,12 @@
 
     <string name="start_button">Graj</string>
     <string name="initial_points">0</string>
-    <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="game_finished">Koniec gry!</string>
     <string name="return_to_main_menu">Wróć do menu</string>
     <string name="play_again">Zagraj ponownie</string>
+    <string name="select_difficulty_title">Poziom trudności</string>
+    <string name="very_easy_difficulty">Bardzo łatwy</string>
+    <string name="easy_difficulty">Łatwy</string>
+    <string name="medium_difficulty">Normalny</string>
+    <string name="hard_difficulty">Trudny</string>
 </resources>

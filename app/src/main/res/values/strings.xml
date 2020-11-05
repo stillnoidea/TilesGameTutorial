@@ -12,4 +12,5 @@
     <string name="easy_difficulty">Łatwy</string>
     <string name="medium_difficulty">Normalny</string>
     <string name="hard_difficulty">Trudny</string>
+    <string name="LoginButton">Zaloguj</string>
 </resources>

@@ -7,6 +7,8 @@ import android.view.MenuItem
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.DialogFragment
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 import pl.mazurprzenioslo.tilegame.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity(),
@@ -51,5 +53,13 @@ class MainActivity : AppCompatActivity(),
 
     companion object {
         const val DIFFICULTY_KEY = "selectedDifficulty";
+        const val IS_SIGNED_OUT = "isSignedOut";
+    }
+
+    fun signOut(v: View){
+        Firebase.auth.signOut()
+        val intent = Intent(this, Login::class.java)
+        intent.putExtra("isSignedOut", true)
+        startActivity(intent)
     }
 }

@@ -16,6 +16,7 @@ import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import pl.mazurprzenioslo.tilegame.databinding.ActivityGameBinding
+import pl.mazurprzenioslo.tilegame.service.Service
 import java.util.*
 import java.util.concurrent.atomic.AtomicInteger
 import kotlin.concurrent.timerTask
@@ -30,6 +31,7 @@ class GameActivity : FragmentActivity(), GameFinishedDialogFragment.GameFinished
     private var clearedBoxesCounter = AtomicInteger()
     private lateinit var difficulty: Difficulty
     var gameFinished = false
+//    private val service: Service = Service()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -107,6 +109,7 @@ class GameActivity : FragmentActivity(), GameFinishedDialogFragment.GameFinished
     }
 
     private fun showGameFinishedDialog() {
+        Service.checkAndUpdatePlayerScoreAndRank(difficulty, clearedBoxesCounter.get(), 0)
         GameFinishedDialogFragment().apply { isCancelable = false }
             .show(supportFragmentManager, "gameFinishedDialog")
     }

@@ -8,7 +8,9 @@ import com.google.firebase.firestore.FieldPath
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
-import pl.mazurprzenioslo.tilegame.Difficulty
+import pl.mazurprzenioslo.tilegame.data.Difficulty
+import pl.mazurprzenioslo.tilegame.data.RankValue
+import pl.mazurprzenioslo.tilegame.data.User
 
 object Service {
     private var auth = Firebase.auth
@@ -19,7 +21,6 @@ object Service {
     }
 
     private fun checkPlayerAndAdd() {
-        val a = auth
         database.collection("users").document(auth.uid!!).get().addOnSuccessListener { data ->
             if (!data.exists()) {
                 handleNewPlayer()
@@ -35,7 +36,11 @@ object Service {
             }
     }
 
-    fun checkAndUpdatePlayerScoreAndRank(difficulty: Difficulty, score: Int, additionalMoney: Long) {
+    fun checkAndUpdatePlayerScoreAndRank(
+        difficulty: Difficulty,
+        score: Int,
+        additionalMoney: Long
+    ) {
         database.collection("users").document(auth.uid!!).get().addOnSuccessListener { doc ->
             val dbScore = doc.get(difficulty.name.toLowerCase()) as Long
             if (dbScore.compareTo(score) == -1) {
@@ -45,7 +50,11 @@ object Service {
         }
     }
 
-    private fun updatePlayerScoreAndMoney(difficulty: Difficulty, newScore: Int, additionalMoney: Long) {
+    private fun updatePlayerScoreAndMoney(
+        difficulty: Difficulty,
+        newScore: Int,
+        additionalMoney: Long
+    ) {
         database.collection("users").document(auth.uid!!)
             .update(difficulty.name.toLowerCase(), newScore)
         database.collection("users").document(auth.uid!!)
@@ -70,13 +79,18 @@ object Service {
             .update(path, score)
     }
 
-    private fun checkAndHandleUserInRank(score: Int, difficulty: Difficulty, data: DocumentSnapshot) {
+    private fun checkAndHandleUserInRank(
+        score: Int,
+        difficulty: Difficulty,
+        data: DocumentSnapshot
+    ) {
         val lastUserId = getLastRankUser(data)
         if (lastUserId != null && lastUserId.score < score) {
             updateRanks(auth.currentUser!!.email!!, score, difficulty)
 
             val updates = hashMapOf<String, Any>(
-                lastUserId.login to FieldValue.delete())
+                lastUserId.login to FieldValue.delete()
+            )
             database.collection("ranks").document(difficulty.name.toLowerCase())
                 .update(updates)
         } else if (lastUserId == null) {
@@ -95,18 +109,17 @@ object Service {
 
     fun getRank(difficulty: Difficulty, onDataReturnedCallback: (MutableList<RankValue>) -> Unit) {
         database.collection("ranks").document(difficulty.name.toLowerCase()).get()
-            .addOnSuccessListener {data ->
-            onDataReturnedCallback(getSortedRank(data))
-        }
+            .addOnSuccessListener { data ->
+                onDataReturnedCallback(getSortedRank(data))
+            }
     }
 
-    private fun getSortedRank(data: DocumentSnapshot): MutableList<RankValue>{
-        val rank = mutableListOf<RankValue>()
-        for (user: String in data.data!!.keys) {
-            val value = RankValue(user, data[user] as Long)
-            rank.add(value)
-        }
-        rank.sortBy { r -> r.score }
+    private fun getSortedRank(documentSnapshot: DocumentSnapshot): MutableList<RankValue> {
+        val rank =
+            documentSnapshot.data!!.map { userScore -> RankValue(userScore.key, userScore.value as Long) }
+                .toMutableList()
+        rank.sortByDescending { r -> r.score }
+
         return rank
     }
 }

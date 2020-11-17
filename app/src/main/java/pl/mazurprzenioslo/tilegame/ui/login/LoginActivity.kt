@@ -1,4 +1,4 @@
-package pl.mazurprzenioslo.tilegame
+package pl.mazurprzenioslo.tilegame.ui.login
 
 import android.content.Intent
 import android.os.Bundle
@@ -16,10 +16,12 @@ import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
+import pl.mazurprzenioslo.tilegame.R
 import pl.mazurprzenioslo.tilegame.service.Service
+import pl.mazurprzenioslo.tilegame.ui.main.MainActivity
 
 
-class Login : AppCompatActivity() {
+class LoginActivity : AppCompatActivity() {
     private lateinit var auth: FirebaseAuth
     private lateinit var googleSignInClient: GoogleSignInClient
     private val RC_SIGN_IN = 300
@@ -66,7 +68,6 @@ class Login : AppCompatActivity() {
         super.onActivityResult(requestCode, resultCode, data)
 
         if (requestCode == RC_SIGN_IN) {
-            val task = GoogleSignIn.getSignedInAccountFromIntent(data)
             try {
                 val task: Task<GoogleSignInAccount> =
                     GoogleSignIn.getSignedInAccountFromIntent(data)

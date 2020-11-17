@@ -1,10 +1,11 @@
-package pl.mazurprzenioslo.tilegame
+package pl.mazurprzenioslo.tilegame.ui.game
 
 import android.app.Dialog
 import android.content.Context
 import android.os.Bundle
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.DialogFragment
+import pl.mazurprzenioslo.tilegame.R
 
 class GameFinishedDialogFragment : DialogFragment() {
     private lateinit var listener: GameFinishedDialogListener

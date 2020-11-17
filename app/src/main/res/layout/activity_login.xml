@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Login">
+    tools:context=".ui.login.LoginActivity">
 
     <Button
         android:id="@+id/loginButton"
@@ -14,10 +14,12 @@
         android:layout_marginEnd="162dp"
         android:layout_marginBottom="110dp"
         android:onClick="login"
-        android:text="@string/LoginButton"
+        android:text="@string/login_button"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:title="@string/app_name"
+        app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"/>
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar2"

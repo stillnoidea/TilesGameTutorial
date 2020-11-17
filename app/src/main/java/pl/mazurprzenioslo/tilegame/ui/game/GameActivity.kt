@@ -1,6 +1,5 @@
-package pl.mazurprzenioslo.tilegame
+package pl.mazurprzenioslo.tilegame.ui.game
 
-import Tile
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -15,6 +14,10 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import pl.mazurprzenioslo.tilegame.ui.main.MainActivity
+import pl.mazurprzenioslo.tilegame.R
+import pl.mazurprzenioslo.tilegame.data.Difficulty
+import pl.mazurprzenioslo.tilegame.data.Tile
 import pl.mazurprzenioslo.tilegame.databinding.ActivityGameBinding
 import pl.mazurprzenioslo.tilegame.service.Service
 import java.util.*

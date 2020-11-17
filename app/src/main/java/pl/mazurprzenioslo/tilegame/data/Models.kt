@@ -1,4 +1,4 @@
-package pl.mazurprzenioslo.tilegame.service
+package pl.mazurprzenioslo.tilegame.data
 
 data class User(
     var login: String,

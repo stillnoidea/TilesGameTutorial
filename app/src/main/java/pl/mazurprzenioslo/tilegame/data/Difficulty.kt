@@ -1,4 +1,6 @@
-package pl.mazurprzenioslo.tilegame
+package pl.mazurprzenioslo.tilegame.data
+
+import pl.mazurprzenioslo.tilegame.R
 
 enum class Difficulty(
     val nameResourceId: Int,

@@ -104,7 +104,7 @@ object Service {
         if (rank.size < 10) {
             return null
         }
-        return rank[0]
+        return rank[9]
     }
 
     fun getRank(difficulty: Difficulty, onDataReturnedCallback: (MutableList<RankValue>) -> Unit) {

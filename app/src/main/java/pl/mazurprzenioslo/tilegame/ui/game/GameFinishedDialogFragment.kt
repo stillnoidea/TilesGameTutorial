@@ -26,16 +26,18 @@ class GameFinishedDialogFragment : DialogFragment() {
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         return activity?.let {
-            val array =
-                arrayOf(getString(R.string.return_to_main_menu), getString(R.string.play_again))
             val builder = AlertDialog.Builder(it)
             builder.setTitle(getString(R.string.game_finished))
+                .setMessage(
+                    """
+                    Wynik: ${arguments?.get(GameActivity.CLEARED_TILES_COUNT_KEY)} pkt
+                    Zdobyte monety: ${arguments?.get(GameActivity.GAINED_MONEY_KEY)}""".trimIndent()
+                )
                 .setCancelable(false)
-                .setItems(array) { _, checkedItemIndex ->
-                    when (checkedItemIndex) {
-                        0 -> listener.onReturnToMainMenu(this)
-                        1 -> listener.onPlayAgain(this)
-                    }
+                .setPositiveButton(getString(R.string.play_again)) { _, _ ->
+                    listener.onPlayAgain(this)
+                }.setNegativeButton(getString(R.string.return_to_main_menu)) { _, _ ->
+                    listener.onReturnToMainMenu(this)
                 }
             builder.create()
         } ?: throw IllegalStateException("Activity cannot be null")

@@ -7,58 +7,55 @@ import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FieldPath
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.ktx.Firebase
 import pl.mazurprzenioslo.tilegame.data.Difficulty
 import pl.mazurprzenioslo.tilegame.data.RankValue
 import pl.mazurprzenioslo.tilegame.data.User
 
-object Service {
+object GameService {
     private var auth = Firebase.auth
     private val database = Firebase.firestore
 
     fun addNewPlayer() {
-        checkPlayerAndAdd()
-    }
-
-    private fun checkPlayerAndAdd() {
         database.collection("users").document(auth.uid!!).get().addOnSuccessListener { data ->
             if (!data.exists()) {
-                handleNewPlayer()
+                saveNewPlayer()
             }
         }
     }
 
-    private fun handleNewPlayer() {
-        val user: User = User(auth.currentUser!!.email!!, 0, 0, 0, 0, 0)
+    private fun saveNewPlayer() {
+        val user = User(auth.currentUser!!.email!!, 0, 0, 0, 0, 0)
         database.collection("users").document(auth.uid!!).set(user)
             .addOnSuccessListener { documentReference ->
                 Log.d(TAG, "DocumentSnapshot added with ID: $documentReference")
             }
     }
 
-    fun checkAndUpdatePlayerScoreAndRank(
-        difficulty: Difficulty,
-        score: Int,
-        additionalMoney: Long
-    ) {
+    fun processNewPlayerScore(difficulty: Difficulty, score: Int) {
         database.collection("users").document(auth.uid!!).get().addOnSuccessListener { doc ->
+            addMoneyToPlayer(calculateGainedMoney(difficulty, score))
             val dbScore = doc.get(difficulty.name.toLowerCase()) as Long
             if (dbScore.compareTo(score) == -1) {
-                updatePlayerScoreAndMoney(difficulty, score, additionalMoney)
+                updatePlayerScore(difficulty, score)
                 checkAndUpdateRanks(difficulty, score)
             }
         }
     }
 
-    private fun updatePlayerScoreAndMoney(
-        difficulty: Difficulty,
-        newScore: Int,
-        additionalMoney: Long
-    ) {
+    private fun updatePlayerScore(difficulty: Difficulty, newScore: Int) {
         database.collection("users").document(auth.uid!!)
             .update(difficulty.name.toLowerCase(), newScore)
+    }
+
+    private fun addMoneyToPlayer(additionalMoney: Long) {
         database.collection("users").document(auth.uid!!)
             .update("money", FieldValue.increment(additionalMoney))
+    }
+
+    fun calculateGainedMoney(difficulty: Difficulty, score: Int): Long {
+        return (difficulty.gainedMoneyMultiplier * score).toLong()
     }
 
     private fun checkAndUpdateRanks(difficulty: Difficulty, score: Int) {
@@ -98,7 +95,6 @@ object Service {
         }
     }
 
-
     private fun getLastRankUser(data: DocumentSnapshot): RankValue? {
         val rank = getSortedRank(data)
         if (rank.size < 10) {
@@ -114,9 +110,20 @@ object Service {
             }
     }
 
+    fun getLoggedPlayer(callback: (User) -> Unit) {
+        database.collection("users").document(auth.uid!!).get().addOnSuccessListener { document ->
+            callback(document.toObject()!!)
+        }
+    }
+
     private fun getSortedRank(documentSnapshot: DocumentSnapshot): MutableList<RankValue> {
         val rank =
-            documentSnapshot.data!!.map { userScore -> RankValue(userScore.key, userScore.value as Long) }
+            documentSnapshot.data!!.map { userScore ->
+                RankValue(
+                    userScore.key,
+                    userScore.value as Long
+                )
+            }
                 .toMutableList()
         rank.sortByDescending { r -> r.score }
 

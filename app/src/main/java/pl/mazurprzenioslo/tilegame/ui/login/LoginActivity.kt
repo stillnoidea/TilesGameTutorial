@@ -17,7 +17,7 @@ import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import pl.mazurprzenioslo.tilegame.R
-import pl.mazurprzenioslo.tilegame.service.Service
+import pl.mazurprzenioslo.tilegame.service.GameService
 import pl.mazurprzenioslo.tilegame.ui.main.MainActivity
 
 
@@ -85,7 +85,7 @@ class LoginActivity : AppCompatActivity() {
             .addOnCompleteListener(this) { task ->
                 if (task.isSuccessful) {
                     val user = auth.currentUser
-                    Service.addNewPlayer()
+                    GameService.addNewPlayer()
                     updateUI(user)
                 } else {
                     Toast.makeText(this, "Authentication Failed.", Toast.LENGTH_LONG).show()

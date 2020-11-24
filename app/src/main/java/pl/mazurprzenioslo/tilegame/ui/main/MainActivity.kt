@@ -2,16 +2,14 @@ package pl.mazurprzenioslo.tilegame.ui.main
 
 import android.content.Intent
 import android.os.Bundle
-import android.view.Menu
-import android.view.MenuItem
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.DialogFragment
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
-import pl.mazurprzenioslo.tilegame.R
 import pl.mazurprzenioslo.tilegame.data.Difficulty
 import pl.mazurprzenioslo.tilegame.databinding.ActivityMainBinding
+import pl.mazurprzenioslo.tilegame.service.GameService
 import pl.mazurprzenioslo.tilegame.ui.game.GameActivity
 import pl.mazurprzenioslo.tilegame.ui.leaderboard.LeaderboardActivity
 import pl.mazurprzenioslo.tilegame.ui.login.LoginActivity
@@ -27,15 +25,14 @@ class MainActivity : AppCompatActivity(),
         setSupportActionBar(binding.toolbar)
     }
 
-    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        menuInflater.inflate(R.menu.menu_main, menu)
-        return true
+    override fun onStart() {
+        super.onStart()
+        updatePlayerValues()
     }
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when (item.itemId) {
-            R.id.action_settings -> true
-            else -> super.onOptionsItemSelected(item)
+    private fun updatePlayerValues() {
+        GameService.getLoggedPlayer() {
+            binding.playerMoneyTextView.text = it.money.toString()
         }
     }
 
@@ -46,12 +43,12 @@ class MainActivity : AppCompatActivity(),
         )
     }
 
-    fun showLeaderboards(v: View){
+    fun showLeaderboards(v: View) {
         val intent = Intent(this, LeaderboardActivity::class.java)
         startActivity(intent)
     }
 
-    fun signOut(v: View){
+    fun signOut(v: View) {
         Firebase.auth.signOut()
         val intent = Intent(this, LoginActivity::class.java)
         intent.putExtra("isSignedOut", true)

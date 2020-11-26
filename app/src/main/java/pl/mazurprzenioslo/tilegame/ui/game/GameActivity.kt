@@ -1,9 +1,7 @@
-package pl.mazurprzenioslo.tilegame
+package pl.mazurprzenioslo.tilegame.ui.game
 
-import Tile
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.widget.ArrayAdapter
 import android.widget.GridView
 import android.widget.TextView
@@ -15,7 +13,12 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import pl.mazurprzenioslo.tilegame.R
+import pl.mazurprzenioslo.tilegame.data.Difficulty
+import pl.mazurprzenioslo.tilegame.data.Tile
 import pl.mazurprzenioslo.tilegame.databinding.ActivityGameBinding
+import pl.mazurprzenioslo.tilegame.service.GameService
+import pl.mazurprzenioslo.tilegame.ui.main.MainActivity
 import java.util.*
 import java.util.concurrent.atomic.AtomicInteger
 import kotlin.concurrent.timerTask
@@ -51,7 +54,6 @@ class GameActivity : FragmentActivity(), GameFinishedDialogFragment.GameFinished
         }
 
         tilesGridView.post {
-            Log.d("Log", "Height: " + tilesGridView.height)
             tilesGridView.children.iterator()
                 .forEach { tile ->
                     tile.layoutParams.height = tilesGridView.height / GRID_ROWS - 4
@@ -107,7 +109,22 @@ class GameActivity : FragmentActivity(), GameFinishedDialogFragment.GameFinished
     }
 
     private fun showGameFinishedDialog() {
-        GameFinishedDialogFragment().apply { isCancelable = false }
+        GameService.processNewPlayerScore(difficulty, clearedBoxesCounter.get())
+        val bundle = Bundle().apply {
+            putLong(
+                GAINED_MONEY_KEY,
+                GameService.calculateGainedMoney(difficulty, clearedBoxesCounter.get())
+            )
+            putInt(
+                CLEARED_TILES_COUNT_KEY,
+                clearedBoxesCounter.get()
+            )
+        }
+
+        GameFinishedDialogFragment().apply {
+            isCancelable = false
+            arguments = bundle
+        }
             .show(supportFragmentManager, "gameFinishedDialog")
     }
 
@@ -119,14 +136,6 @@ class GameActivity : FragmentActivity(), GameFinishedDialogFragment.GameFinished
         filledBoxesCount.set(0)
         clearedBoxesCounter.set(0)
         counterTextView.text = "0"
-    }
-
-    companion object {
-        const val GRID_COLUMNS = 4
-        const val GRID_ROWS = 7
-        const val DELAY_BEFORE_FIRST_FILL_MS = 1000L;
-        const val FINISHED_PLAYING_RESULT_OK = 4321
-        const val CLEARED_TILES_COUNT_KEY = "clearedTilesCount"
     }
 
     override fun onReturnToMainMenu(dialog: DialogFragment) {
@@ -142,5 +151,14 @@ class GameActivity : FragmentActivity(), GameFinishedDialogFragment.GameFinished
         }.invokeOnCompletion {
             showGameFinishedDialog()
         }
+    }
+
+    companion object {
+        const val GRID_COLUMNS = 4
+        const val GRID_ROWS = 7
+        const val DELAY_BEFORE_FIRST_FILL_MS = 1000L;
+        const val FINISHED_PLAYING_RESULT_OK = 4321
+        const val CLEARED_TILES_COUNT_KEY = "clearedTilesCount"
+        const val GAINED_MONEY_KEY = "gainedMoney"
     }
 }

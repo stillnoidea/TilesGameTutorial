@@ -5,7 +5,6 @@ import android.os.Bundle
 import android.widget.ArrayAdapter
 import android.widget.GridView
 import android.widget.TextView
-import androidx.core.content.ContextCompat
 import androidx.core.view.children
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentActivity
@@ -32,6 +31,7 @@ class GameActivity : FragmentActivity(), GameFinishedDialogFragment.GameFinished
     private var filledBoxesCount = AtomicInteger()
     private var clearedBoxesCounter = AtomicInteger()
     private lateinit var difficulty: Difficulty
+    private var fillColor: Int = 0
     var gameFinished = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -43,14 +43,18 @@ class GameActivity : FragmentActivity(), GameFinishedDialogFragment.GameFinished
 
         difficulty = intent.getSerializableExtra(MainActivity.DIFFICULTY_KEY) as Difficulty
         tilesGridView.numColumns = GRID_COLUMNS;
+        fillColor = getColor(R.color.purple_tile)
 
         val tilesAdapter = ArrayAdapter(this, R.layout.tile, tiles)
-
         tilesGridView.adapter = tilesAdapter
         tilesGridView.setOnItemClickListener { _, _, position, _ ->
             if (tiles[position].filled) {
                 onTileClicked(position)
             }
+        }
+
+        GameService.getLoggedPlayer {
+            fillColor = getColor(it.selectedTileColor.colorResourceId)
         }
 
         tilesGridView.post {
@@ -104,7 +108,7 @@ class GameActivity : FragmentActivity(), GameFinishedDialogFragment.GameFinished
         filledBoxesCount.getAndIncrement()
         runOnUiThread {
             tilesGridView.getChildAt(tiles.indexOf(randomUnfilledTile))
-                .setBackgroundColor(ContextCompat.getColor(this, R.color.purple_200))
+                .setBackgroundColor(fillColor)
         }
     }
 

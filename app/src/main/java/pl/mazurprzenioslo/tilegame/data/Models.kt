@@ -2,7 +2,8 @@ package pl.mazurprzenioslo.tilegame.data
 
 data class User(
     val login: String = "",
-    var unlockedTileColors: List<TileColor> = ArrayList(),
+    var unlockedTileColors: MutableList<TileColor> = ArrayList(),
+    var selectedTileColor: TileColor = TileColor.PURPLE,
     var very_easy: Int = 0,
     var easy: Int = 0,
     var medium: Int = 0,

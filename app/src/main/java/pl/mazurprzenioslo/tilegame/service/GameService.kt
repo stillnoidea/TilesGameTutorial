@@ -73,6 +73,11 @@ object GameService {
             )
     }
 
+    fun selectTileColor(tileColor: TileColor) {
+        database.collection(USERS_COLLECTION_PATH).document(auth.uid!!)
+            .update("selectedTileColor", tileColor)
+    }
+
     private fun checkAndUpdateRanks(difficulty: Difficulty, score: Int) {
         database.collection(RANKS_COLLECTION_PATH).document(difficulty.name.toLowerCase()).get()
             .addOnSuccessListener { data ->

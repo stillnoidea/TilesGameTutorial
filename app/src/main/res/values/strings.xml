@@ -6,6 +6,7 @@
     <string name="shop_button">Sklep</string>
     <string name="leaderboards_button">Rankingi</string>
     <string name="login_button">Zaloguj</string>
+    <string name="logout_button">Wyloguj</string>
     <string name="initial_points">0</string>
     <string name="game_finished">Koniec gry!</string>
     <string name="return_to_main_menu">Wróć do menu</string>
@@ -17,4 +18,7 @@
     <string name="medium_difficulty">Normalny</string>
     <string name="hard_difficulty">Trudny</string>
     <string name="leaderboard_header">Tablica wyników</string>
+    <string name="shop_header">Sklep</string>
+    <string name="shop_item_locked">Zablokowany</string>
+    <string name="selected_shop_item">Wybrany</string>
 </resources>

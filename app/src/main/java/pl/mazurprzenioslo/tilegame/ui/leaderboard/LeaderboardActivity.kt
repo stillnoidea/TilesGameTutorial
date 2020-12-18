@@ -63,7 +63,7 @@ class LeaderboardActivity : AppCompatActivity() {
                 Log.d(this.localClassName, "swipe distanceX: $distanceX")
                 val currentTabPosition = binding.tabLayout.selectedTabPosition
                 if (abs(distanceX) > MIN_SWIPE_DISTANCE) {
-                    if (distanceX > 0 && currentTabPosition < 3) {
+                    if (distanceX > 0 && currentTabPosition < binding.tabLayout.tabCount - 1) {
                         binding.tabLayout.getTabAt(currentTabPosition + 1)?.select()
                         return true
                     } else if (distanceX < 0 && currentTabPosition > 0) {

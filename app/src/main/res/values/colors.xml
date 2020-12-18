@@ -7,8 +7,10 @@
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="purple_tile">#7C4DFF</color>
     <color name="red_tile">#f44336</color>
-    <color name="green_tile">#4caf50</color>
-    <color name="blue_tile">#039be5</color>
-    <color name="amber_tile">#ffc107</color>
+    <color name="green_tile">#66BB6A</color>
+    <color name="blue_tile">#448AFF</color>
+    <color name="amber_tile">#FFCA28</color>
+    <color name="selected_shop_item_text_color">#DEFFFFFF</color>
 </resources>

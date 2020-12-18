@@ -13,6 +13,7 @@ import pl.mazurprzenioslo.tilegame.service.GameService
 import pl.mazurprzenioslo.tilegame.ui.game.GameActivity
 import pl.mazurprzenioslo.tilegame.ui.leaderboard.LeaderboardActivity
 import pl.mazurprzenioslo.tilegame.ui.login.LoginActivity
+import pl.mazurprzenioslo.tilegame.ui.shop.ShopActivity
 
 class MainActivity : AppCompatActivity(),
     DifficultySelectionDialogFragment.DifficultySelectionDialogListener {
@@ -45,6 +46,11 @@ class MainActivity : AppCompatActivity(),
 
     fun showLeaderboards(v: View) {
         val intent = Intent(this, LeaderboardActivity::class.java)
+        startActivity(intent)
+    }
+
+    fun openShop(v: View) {
+        val intent = Intent(this, ShopActivity::class.java)
         startActivity(intent)
     }
 
